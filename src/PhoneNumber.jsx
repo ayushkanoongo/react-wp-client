@@ -1,27 +1,29 @@
 import './App.css';
-import React, { useState } from 'react';
+import React from 'react';
 import { Form, FormGroup, Label, Input, FormFeedback, FormText, Button} from 'reactstrap';
 
 class PhoneNumber extends React.Component {
   constructor() {
     super();
-    this.state = {value: "", disabled: true};
+    this.state = {value: ""};
   }
 
   handleChange = (e) => {
-    const {value} = this.state
-    const disabled = value.length === 10 ? false : true
-    this.setState({value: e.target.value, disabled: disabled})
+    this.setState({value: e.target.value})
   }
 
   handleSubmit = () => {
-    const newPageUrl = `http://api.whatsapp.com/send?phone=91${this.state.value}`
+    const { innerWidth } = window;
+    const newPageUrl = innerWidth < 1024 ? `http://api.whatsapp.com/send?phone=91${this.state.value}` : `http://web.whatsapp.com/send?phone=91${this.state.value}`
     window.open(newPageUrl, "_blank")
   }
 
   render() {
-    const {value, disabled} = this.state
-    if(value && value.length === 10){
+    const {value} = this.state
+    const phoneRegEx = new RegExp(/^[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-/\s.]?[0-9]{4}$/);
+    const valid = phoneRegEx.test(value)
+
+    if(valid){
       return(
         <Form>
           <FormGroup>
@@ -34,10 +36,10 @@ class PhoneNumber extends React.Component {
               value={value}
               onChange={this.handleChange}
             />
-            <FormText>Number Count - {value.length || 0}</FormText>
+            <FormText>Number Count : {value.length || 0}</FormText>
             <FormFeedback valid>Sweet! You are good to go</FormFeedback>
           </FormGroup>
-          <Button color="success" onClick={this.handleSubmit}>Submit</Button>
+          <Button color="success" disabled={!valid} onClick={this.handleSubmit}>Send</Button>
         </Form>
       )}
     else {
@@ -54,7 +56,7 @@ class PhoneNumber extends React.Component {
                   value={value}
                   onChange={this.handleChange}
                 />
-                <FormText>Number Count - {value.length || 0}</FormText>
+                <FormText>Number Count : {value.length || 0}</FormText>
               </React.Fragment>
             :
               <React.Fragment>
@@ -64,12 +66,12 @@ class PhoneNumber extends React.Component {
                   value={value}
                   onChange={this.handleChange}
                 />
-                <FormText>Number Count - {value.length || 0}</FormText>
+                <FormText>Number Count : {value.length || 0}</FormText>
                 <FormFeedback>Oh noes! check the number again</FormFeedback>
               </React.Fragment>
             }
           </FormGroup>
-          <Button color="success" disabled={disabled} onClick={this.handleSubmit}>Submit</Button>
+          <Button color="success" disabled={!valid} onClick={this.handleSubmit}>Send</Button>
         </Form>
       )
     }
