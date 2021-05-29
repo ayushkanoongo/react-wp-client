@@ -1,5 +1,5 @@
 import './App.css';
-import PhoneNumber from './PhoneNumber';
+import PhoneNumber from './components/PhoneNumber';
 
 function App() {
   return (
